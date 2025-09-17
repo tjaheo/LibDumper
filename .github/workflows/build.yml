@@ -13,23 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Make gradlew executable
+      run: chmod +x gradlew
 
-      - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+    - name: Set up Gradle cache
+      uses: gradle/gradle-build-action@v4
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: MyApp-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+    - name: Build APK with logging
+      run: ./gradlew assembleDebug --stacktrace --info
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: MyApp-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
